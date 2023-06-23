@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import folium
-from folium.plugins import HeatMap,MarkerCluster
+from folium.plugins import HeatMap, MarkerCluster, MiniMap
 import streamlit as st
 from streamlit_folium import folium_static
 
@@ -20,8 +20,7 @@ def data_cleanup(csv):
 
 
 def create_map(df):
-    m= folium.Map(tiles='cartodbpositron',
-                  location=[54.1,-124.2], 
+    m= folium.Map(location=[54.1,-124.2], 
                   zoom_start=5)
     
     marker_cluster = MarkerCluster(name='Bear Observations').add_to(m)
@@ -39,10 +38,12 @@ def create_map(df):
         heat_data.append(lat_long)
         
     HeatMap(heat_data, 
-            min_opacity=0.4,
-            blur = 20).add_to(folium.FeatureGroup(name='Heatmap of Bear Observations').add_to(m))
+            min_opacity= 0.4,
+            blur= 20).add_to(folium.FeatureGroup(name='Heatmap of Bear Observations').add_to(m))
     
-
+    minimap = MiniMap(position="bottomleft")
+    m.add_child(minimap)
+    
     folium.LayerControl().add_to(m)
     
     return m
@@ -152,4 +153,4 @@ if __name__==__name__:
         st.header('Observations by Year and Subspecies')
         st.plotly_chart(plot,use_container_width=True)
         
-   # m.save('test_map_2.html')
+    #m.save('test_map_2.html')

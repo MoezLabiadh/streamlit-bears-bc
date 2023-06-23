@@ -22,8 +22,8 @@ def data_cleanup(csv):
     
     return gdf
 
-@st.cache_resource
-def create_map(_gdf):
+
+def create_map(gdf):
     m= folium.Map(tiles='cartodbpositron')
     xmin,ymin,xmax,ymax = gdf['geometry'].total_bounds
     m.fit_bounds([[ymin, xmin], [ymax, xmax]])
@@ -42,7 +42,7 @@ def create_map(_gdf):
     heat_data = [[row['latitude'],row['longitude']] for index, row in gdf.iterrows()]
     HeatMap(heat_data, 
             min_opacity=0.4,
-            blur = 15).add_to(folium.FeatureGroup(name='Heatmap of Bear Observations').add_to(m))
+            blur = 20).add_to(folium.FeatureGroup(name='Heatmap of Bear Observations').add_to(m))
     
 
     folium.LayerControl().add_to(m)
@@ -157,4 +157,4 @@ if __name__==__name__:
         st.header('Observations by Year and Subspecies')
         st.plotly_chart(plot,use_container_width=True)
         
-    m.save('test_map_2.html')
+    #m.save('test_map_2.html')

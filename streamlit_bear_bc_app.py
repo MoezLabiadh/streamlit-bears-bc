@@ -134,22 +134,7 @@ if __name__==__name__:
         st.subheader(f'{pct_black} %')
         
         
-    #st.write(":heavy_minus_sign:" * 34) # horizontal separator line. 
-    # Add divider between rows
-    with st.beta_container():
-        st.markdown(
-            """<style>
-            .divider {
-                height: 1px;
-                background-color: #e0e0e0;
-                margin-top: 10px;
-                margin-bottom: 10px;
-            }
-            </style>
-            <div class="divider"></div>
-            """,
-            unsafe_allow_html=True
-        )
+    st.divider()
     
     
     col3, col4 = st.columns([0.4,0.6])      

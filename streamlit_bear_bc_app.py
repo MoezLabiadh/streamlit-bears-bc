@@ -2,7 +2,7 @@ import pandas as pd
 import geopandas as gpd
 import plotly.express as px
 import folium
-from folium.plugins import HeatMap
+from folium.plugins import HeatMap,MarkerCluster
 import streamlit as st
 from streamlit_folium import folium_static
 
@@ -22,23 +22,21 @@ def data_cleanup(csv):
     
     return gdf
 
-
+@st.cache_data
 def create_map(gdf):
     m= folium.Map(tiles='cartodbpositron')
     xmin,ymin,xmax,ymax = gdf['geometry'].total_bounds
     m.fit_bounds([[ymin, xmin], [ymax, xmax]])
     
-    #popup_cols = [col for col in gdf.columns if col not in ['geometry','latitude','longitude']]
+    marker_cluster = MarkerCluster().add_to(m)
     
-    gdf.explore(
-             m=m,
-             column= 'common_name', 
-             tooltip= 'obs_yr', 
-             popup=True, 
-             style_kwds=dict(fill= True, weight=0.5),
-             cmap="gnuplot",
-             #cmap="Spectral",
-             name='Bear Observations')
+    for idx, row in gdf.iterrows():
+        lat, lon = row['latitude'], row['longitude']
+        obs_yr = row['obs_yr']
+        common_name = row['common_name']
+        popup_html = f"<b>Point {idx+1}</b><br>Observation Year: {obs_yr}<br>Common Name: {common_name}"
+        popup = folium.Popup(popup_html)
+        folium.Marker([lat, lon], popup=popup).add_to(marker_cluster)
     
     
     heat_data = [[row['latitude'],row['longitude']] for index, row in gdf.iterrows()]
@@ -46,7 +44,7 @@ def create_map(gdf):
             min_opacity=0.4,
             blur = 15).add_to(folium.FeatureGroup(name='Heatmap of Bear Observations').add_to(m))
     
-    
+
     folium.LayerControl().add_to(m)
     
     return m
@@ -140,6 +138,7 @@ if __name__==__name__:
     col3, col4 = st.columns([0.4,0.6])      
     
     #----Col3----#
+
     gdf['obs_yr'] = gdf['obs_yr'].astype(int)
     gdf_sel = gdf.loc[(gdf['common_name'].isin(sbsp)) &
                            ((gdf['obs_yr']>= start_year) &
@@ -149,6 +148,7 @@ if __name__==__name__:
         st.header('Spatial distribution of Observations')
         folium_static(m, width=400,height=500)
 
+ 
      #----Col4----#
     
     plot= px.line(df_sel, x='obs_yr', y='count', color='common_name', markers=True,
@@ -157,3 +157,4 @@ if __name__==__name__:
         st.header('Observations by Year and Subspecies')
         st.plotly_chart(plot,use_container_width=True)
         
+    m.save('test_map_2.html')

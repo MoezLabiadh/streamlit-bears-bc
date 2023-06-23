@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import folium
-from folium.plugins import HeatMap, MarkerCluster, MiniMap
+from folium.plugins import HeatMap, MarkerCluster
 import streamlit as st
 from streamlit_folium import folium_static
 
@@ -41,8 +41,8 @@ def create_map(df):
             min_opacity= 0.4,
             blur= 20).add_to(folium.FeatureGroup(name='Heatmap of Bear Observations').add_to(m))
     
-    minimap = MiniMap(position="bottomleft")
-    m.add_child(minimap)
+    #minimap = MiniMap(position="bottomleft")
+    #m.add_child(minimap)
     
     folium.LayerControl().add_to(m)
     

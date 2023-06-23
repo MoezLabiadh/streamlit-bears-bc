@@ -5,3 +5,4 @@ plotly==5.9.0
 folium==0.14.0
 streamlit_folium ==0.12.0
 matplotlib==3.7.1
+mapclassify==2.5.0

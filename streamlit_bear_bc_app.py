@@ -22,7 +22,7 @@ def data_cleanup(csv):
     
     return gdf
 
-@st.cache_data
+@st.cache_resource
 def create_map(_gdf):
     m= folium.Map(tiles='cartodbpositron')
     xmin,ymin,xmax,ymax = gdf['geometry'].total_bounds

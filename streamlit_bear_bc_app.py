@@ -140,7 +140,6 @@ if __name__==__name__:
     col3, col4 = st.columns([0.4,0.6])      
     
     #----Col3----#
-    '''
     gdf['obs_yr'] = gdf['obs_yr'].astype(int)
     gdf_sel = gdf.loc[(gdf['common_name'].isin(sbsp)) &
                            ((gdf['obs_yr']>= start_year) &
@@ -149,8 +148,7 @@ if __name__==__name__:
     with col3:
         st.header('Spatial distribution of Observations')
         folium_static(m, width=400,height=500)
-    '''
- 
+
      #----Col4----#
     
     plot= px.line(df_sel, x='obs_yr', y='count', color='common_name', markers=True,

@@ -1,5 +1,4 @@
 import pandas as pd
-import geopandas as gpd
 import plotly.express as px
 import folium
 from folium.plugins import HeatMap,MarkerCluster
@@ -17,29 +16,28 @@ def data_cleanup(csv):
     df.loc[df['common_name'].str.contains('Black'), 'common_name'] = 'Black Bear'
     df=df[['obs_yr','common_name','latitude','longitude','image_url']]
     
-    gdf= gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df['longitude'], df['latitude']))
-    gdf = gdf.set_crs("EPSG:4326")
-    
-    return gdf
+    return df
 
 
-def create_map(gdf):
-    m= folium.Map(tiles='cartodbpositron')
-    xmin,ymin,xmax,ymax = gdf['geometry'].total_bounds
-    m.fit_bounds([[ymin, xmin], [ymax, xmax]])
+def create_map(df):
+    m= folium.Map(tiles='cartodbpositron',
+                  location=[54.1,-124.2], 
+                  zoom_start=6)
     
-    marker_cluster = MarkerCluster().add_to(m)
+    marker_cluster = MarkerCluster(name='Bear Observations').add_to(m)
+    heat_data= []
     
-    for idx, row in gdf.iterrows():
+    for idx, row in df.iterrows():
         lat, lon = row['latitude'], row['longitude']
         obs_yr = row['obs_yr']
         common_name = row['common_name']
         popup_html = f"<b>Point {idx+1}</b><br>Observation Year: {obs_yr}<br>Common Name: {common_name}"
         popup = folium.Popup(popup_html)
         folium.Marker([lat, lon], popup=popup).add_to(marker_cluster)
-    
-    
-    heat_data = [[row['latitude'],row['longitude']] for index, row in gdf.iterrows()]
+        
+        lat_long = [lat, lon]
+        heat_data.append(lat_long)
+        
     HeatMap(heat_data, 
             min_opacity=0.4,
             blur = 20).add_to(folium.FeatureGroup(name='Heatmap of Bear Observations').add_to(m))
@@ -52,9 +50,6 @@ def create_map(gdf):
 
 
 if __name__==__name__:
-    
-
-    
 
     #---------------Page Settings-------------#
     st.set_page_config(page_title='Bear Observations in BC',
@@ -81,9 +76,9 @@ if __name__==__name__:
 
     #---------------Prepare inputs----------------#
     csv_f= 'bear_observations_bc.csv'
-    gdf= data_cleanup(csv_f)
+    df= data_cleanup(csv_f)
     
-    df_counts = gdf.groupby(['obs_yr', 'common_name']).size().reset_index(name='count')
+    df_counts = df.groupby(['obs_yr', 'common_name']).size().reset_index(name='count')
     df_counts.sort_values('obs_yr',inplace=True)
     
  
@@ -139,11 +134,11 @@ if __name__==__name__:
     
     #----Col3----#
 
-    gdf['obs_yr'] = gdf['obs_yr'].astype(int)
-    gdf_sel = gdf.loc[(gdf['common_name'].isin(sbsp)) &
-                           ((gdf['obs_yr']>= start_year) &
-                            (gdf['obs_yr']<= end_year))]
-    m = create_map(gdf_sel)
+    df['obs_yr'] = df['obs_yr'].astype(int)
+    df_sel_m = df.loc[(df['common_name'].isin(sbsp)) &
+                     ((df['obs_yr']>= start_year) &
+                     (df['obs_yr']<= end_year))]
+    m = create_map(df_sel_m)
     with col3:
         st.header('Spatial distribution of Observations')
         folium_static(m, width=400,height=500)

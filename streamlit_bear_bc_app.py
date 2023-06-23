@@ -22,7 +22,7 @@ def data_cleanup(csv):
 def create_map(df):
     m= folium.Map(tiles='cartodbpositron',
                   location=[54.1,-124.2], 
-                  zoom_start=6)
+                  zoom_start=5)
     
     marker_cluster = MarkerCluster(name='Bear Observations').add_to(m)
     heat_data= []

@@ -142,7 +142,7 @@ if __name__==__name__:
     m = create_map(df_sel_m)
     with col3:
         st.header('Spatial distribution of Observations')
-        folium_static(m, width=400,height=500)
+        folium_static(m, width=420,height=550)
 
  
      #----Col4----#

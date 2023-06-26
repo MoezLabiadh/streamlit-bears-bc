@@ -31,7 +31,7 @@ def create_map(df):
         obs_yr = row['obs_yr']
         common_name = row['common_name']
         popup_html = f"<b>Observation Year</b>: {obs_yr}<br><b>Common Name</b>: {common_name}"
-        popup = folium.Popup(popup_html)
+        popup = folium.Popup(popup_html, max_width=400)
         folium.Marker([lat, lon], popup=popup).add_to(marker_cluster)
         
         lat_long = [lat, lon]

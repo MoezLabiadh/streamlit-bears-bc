@@ -49,7 +49,6 @@ def create_map(df):
     return m
 
 
-
 if __name__==__name__:
 
     #---------------Page Settings-------------#
@@ -71,10 +70,8 @@ if __name__==__name__:
             header {visibility: hidden;}
             </style>
             """
-        
     st.markdown(st_style, unsafe_allow_html=True)
     
-
     #---------------Prepare inputs----------------#
     csv_f= 'bear_observations_bc.csv'
     df= data_cleanup(csv_f)
@@ -96,7 +93,6 @@ if __name__==__name__:
          value=(min_year, max_year),
          step= 1)
     
-    
     sbsp= st.sidebar.multiselect(
         "Select Bear Subspecies",
         options= df_counts['common_name'].unique(),
@@ -106,7 +102,6 @@ if __name__==__name__:
     df_sel = df_counts.loc[(df_counts['common_name'].isin(sbsp)) &
                            ((df_counts['obs_yr']>= start_year) &
                             (df_counts['obs_yr']<= end_year))]
-    
     
     #------------------Main Page--------------------#
     st.title('Bear Observations in BC')  
@@ -126,10 +121,8 @@ if __name__==__name__:
     with col2:
         st.subheader('Percent of Black Bear observations:')  
         st.subheader(f'{pct_black} %')
-        
-        
+             
     st.divider()
-    
     
     col3, col4 = st.columns([0.45,0.55])      
     
@@ -144,7 +137,6 @@ if __name__==__name__:
         st.header('Spatial distribution of Observations')
         folium_static(m, width=450,height=550)
 
- 
      #----Col4----#
     
     plot= px.line(df_sel, x='obs_yr', y='count', color='common_name', markers=True,
@@ -152,5 +144,3 @@ if __name__==__name__:
     with col4:
         st.header('Observations by Year and Subspecies')
         st.plotly_chart(plot,use_container_width=True)
-        
-    #m.save('test_map_2.html')
